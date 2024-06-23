@@ -1,0 +1,27 @@
+name: Push Tasky Image to DockerHub
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: docker login
+      env:
+        DOCKER_USER: ${{secrets.DOCKER_USER}}
+        DOCKER_PASSWORD: ${{secrets.DOCKER_PASS}}
+      run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      
+    - name: Build the Docker image
+      #run: docker build . --file Dockerfile --tag lwsporcello/lw-image-good:${{ github.run_id }}
+      run: docker build . --file Dockerfile --tag sporcello/tasky:latest
+      
+    - name: Push image to registry
+      #run: docker push lwsporcello/lw-image-good:${{ github.run_id }}
+      run: docker push sporcello/tasky:latest
